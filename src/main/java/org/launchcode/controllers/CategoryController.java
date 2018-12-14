@@ -13,43 +13,28 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.validation.Valid;
 
 @Controller
-@RequestMapping("cheese")
+@RequestMapping(value = "category")
 public class CategoryController {
 
     @Autowired
     private CategoryDao categoryDao;
 
     @RequestMapping(value = "")
-    public String index(Model model) {
+    public String index(Model templateVariables) {
+        templateVariables.addAttribute("title", "All Categories");
+        templateVariables.addAttribute("categories", categoryDao.findAll());
+        return "category/index"; }
 
-        model.addAttribute("categories", categoryDao.findAll());
-        model.addAttribute("title", "Categories");
-
-        return "cheese/index";
-
-    }
-
-    @RequestMapping(value = "add", method = RequestMethod.GET)
-    public String add(Model model) {
-        model.addAttribute(new Category());
-        model.addAttribute("title", "Add Category");
-
-        return "cheese/add";
-
-    }
+    @RequestMapping(value = "add")
+    public String add(Model templateVariables) {
+        templateVariables.addAttribute("title", "Add Category");
+        templateVariables.addAttribute("category", new Category());
+        return "category/add"; }
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
-    public String add(Model model, @ModelAttribute @Valid Category category, Errors errors) {
+    public String add(@ModelAttribute @Valid Category category,
+                      Errors errors, Model model) {
+        categoryDao.save(category);
+        return "redirect:"; }
 
-        if (errors.hasErrors()) {
-            model.addAttribute("title", "Add Category");
-            model.addAttribute(new Category());
-            return "cheese/add";
-        }
-        else {
-            categoryDao.save(category);
-            return "redirect:";
-        }
-
-    }
 }

@@ -8,6 +8,9 @@ import java.util.List;
 
 @Entity
 public class Category {
+
+    //Class properties
+
     @Id
     @GeneratedValue
     private int id;
@@ -16,27 +19,23 @@ public class Category {
     @Size(min=3, max=15)
     private String name;
 
-    public Category() { }
-
-    public Category(String name) {
-        this.name = name;
-    }
-
     @OneToMany
     @JoinColumn(name = "category_id")
     private List<Cheese> cheeses = new ArrayList<>();
 
-    //Getters and setters
+    //Getters and Setters
 
-    public String getName() {
-        return this.name;
-    }
+    public int getId() { return id; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public List<Cheese> getCheeses() { return cheeses; }
 
-    public int getId() {
-        return this.id;
-    }
+    public String getName() { return name; }
+
+    public void setName(String name) { this.name = name; }
+
+    //Constructors
+
+    public Category() {  }
+    public Category(String name) { this.name = name; }
+
 }

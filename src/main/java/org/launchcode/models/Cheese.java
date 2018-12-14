@@ -1,5 +1,7 @@
 package org.launchcode.models;
 
+import org.launchcode.models.data.CategoryDao;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -10,6 +12,8 @@ import java.util.List;
  */
 @Entity
 public class Cheese {
+
+    //Class properties
 
     @Id
     @GeneratedValue
@@ -29,12 +33,13 @@ public class Cheese {
     @ManyToMany(mappedBy = "cheeses")
     private List<Menu> menus;
 
-    public Cheese(String name, String description) {
-        this.name = name;
-        this.description = description;
-    }
+    //Constructors
+
+    public Cheese(String name, String description) { this.name = name; this.description = description; }
 
     public Cheese() { }
+
+    //Getters and Setters
 
     public int getId() {
         return id;
@@ -60,7 +65,6 @@ public class Cheese {
         return category;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
-    }
+    public void setCategory(int categoryId, CategoryDao categoryDao)
+    { this.category = categoryDao.findOne(categoryId);}
 }

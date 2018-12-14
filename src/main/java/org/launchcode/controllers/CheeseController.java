@@ -1,9 +1,8 @@
 package org.launchcode.controllers;
 
-import org.launchcode.models.Category;
 import org.launchcode.models.Cheese;
-import org.launchcode.models.data.CheeseDao;
 import org.launchcode.models.data.CategoryDao;
+import org.launchcode.models.data.CheeseDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,11 +18,14 @@ import javax.validation.Valid;
  * Created by LaunchCode
  */
 @Controller
-@RequestMapping("cheese")
+@RequestMapping(value = "cheese")
 public class CheeseController {
 
     @Autowired
     private CheeseDao cheeseDao;
+
+    @Autowired
+    private CategoryDao categoryDao;
 
     // Request path: /cheese
     @RequestMapping(value = "")
@@ -35,9 +37,6 @@ public class CheeseController {
         return "cheese/index";
     }
 
-    @Autowired
-    private CategoryDao categoryDao;
-
     @RequestMapping(value = "add", method = RequestMethod.GET)
     public String displayAddCheeseForm(Model model) {
         model.addAttribute("title", "Add Cheese");
@@ -47,19 +46,14 @@ public class CheeseController {
     }
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
-    public String processAddCheeseForm(
-            @ModelAttribute  @Valid Cheese newCheese,
-            Errors errors,
-            @RequestParam int categoryId,
-            Model model) {
+    public String processAddCheeseForm( @ModelAttribute  @Valid Cheese newCheese, Errors errors,
+                                        @RequestParam int categoryId, Model model) {
 
         if (errors.hasErrors()) {
             model.addAttribute("title", "Add Cheese");
             return "cheese/add";
         }
-
-        Category cat = categoryDao.findOne(categoryId);
-        newCheese.setCategory(cat);
+        newCheese.setCategory(categoryId, categoryDao);
         cheeseDao.save(newCheese);
         return "redirect:";
     }
@@ -74,11 +68,8 @@ public class CheeseController {
     @RequestMapping(value = "remove", method = RequestMethod.POST)
     public String processRemoveCheeseForm(@RequestParam int[] cheeseIds) {
 
-        for (int cheeseId : cheeseIds) {
-            cheeseDao.delete(cheeseId);
-        }
+        for (int cheeseId : cheeseIds) { cheeseDao.delete(cheeseId); }
 
         return "redirect:";
     }
-
 }
