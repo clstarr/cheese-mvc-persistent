@@ -46,11 +46,12 @@ public class CheeseController {
     }
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
-    public String processAddCheeseForm( @ModelAttribute  @Valid Cheese newCheese, Errors errors,
-                                        @RequestParam int categoryId, Model model) {
+    public String processAddCheeseForm(@ModelAttribute @Valid Cheese newCheese, Errors errors,
+                                       @RequestParam int categoryId, Model model) {
 
         if (errors.hasErrors()) {
             model.addAttribute("title", "Add Cheese");
+            model.addAttribute("categories", categoryDao.findAll());
             return "cheese/add";
         }
         newCheese.setCategory(categoryId, categoryDao);
@@ -68,8 +69,25 @@ public class CheeseController {
     @RequestMapping(value = "remove", method = RequestMethod.POST)
     public String processRemoveCheeseForm(@RequestParam int[] cheeseIds) {
 
-        for (int cheeseId : cheeseIds) { cheeseDao.delete(cheeseId); }
+        for (int cheeseId : cheeseIds) {
+            cheeseDao.delete(cheeseId);
+        }
 
         return "redirect:";
     }
+
 }
+
+//    @RequestMapping(value = "category/{categoryId}")
+//    public String categoryCheeses(
+//            Model templateVariables,
+//            @PathVariable(value = "categoryId") int categoryId
+//    ) {
+//        Category category = categoryDao.findOne(categoryId);
+//        List<Cheese> cheeses = category.getCheeses();
+//        templateVariables.addAttribute("title", "Category: " + category.getName() + " cheeses");
+//        templateVariables.addAttribute("cheeses", cheeses);
+//        return "cheese/index";
+//    }
+//
+//}
